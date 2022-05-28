@@ -1,0 +1,22 @@
+name: "tagged-release"
+on:
+  push:
+    tags:
+      - "v*" 
+jobs:
+  tagged-release:
+    name: "Tagged Release"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout source code"
+        uses: "actions/checkout@master"
+      - name: Archive Release
+        run: |
+          rsync -arv --exclude='.git/' --exclude='.github/' --exclude='.gitignore' . ./plausible
+          zip -r plausible.zip plausible
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: false
+          files: |
+            plausible.zip
